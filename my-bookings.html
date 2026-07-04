@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Bookings — TZ-Rooms</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+<nav class="navbar">
+    <a href="index.html" class="logo">TZ<span>-Rooms</span></a>
+    <div class="nav-links" id="nav-links"></div>
+</nav>
+
+<main class="container">
+    <h2 class="section-title">My Bookings</h2>
+    <div id="bookings-list">
+        <p class="text-center" style="padding:2rem">Loading your bookings...</p>
+    </div>
+</main>
+
+<footer>
+    <p><strong>TZ-Rooms</strong> &copy; 2026</p>
+</footer>
+
+<script src="assets/js/main.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', async () => {
+        const user = Auth.getUser();
+        if (!user) { window.location.href = 'login.html'; return; }
+
+        const list = document.getElementById('bookings-list');
+
+        try {
+            const res  = await fetch('api/bookings/my.php', {
+                headers: { 'Authorization': 'Bearer ' + Auth.getToken() }
+            });
+            const data = await res.json();
+
+            if (!data.bookings || data.bookings.length === 0) {
+                list.innerHTML = `
+                    <p class="text-center" style="padding:2rem;color:#888">
+                        No bookings yet. <a href="rooms.html">Browse rooms</a>
+                    </p>`;
+                return;
+            }
+
+            list.innerHTML = data.bookings.map(b => `
+                <div style="background:#fff;border-radius:8px;padding:1.1rem;margin-bottom:0.9rem;box-shadow:0 2px 8px rgba(0,0,0,0.08)">
+                    <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:0.5rem">
+                        <div>
+                            <strong>${b.room_title}</strong>
+                            <p style="font-size:0.85rem;color:#6c757d">📍 ${b.location}</p>
+                            <p style="font-size:0.85rem;color:#444;margin-top:0.3rem">
+                                ${b.start_date} → ${b.end_date}
+                            </p>
+                        </div>
+                        <div style="text-align:right">
+                            <span class="badge badge-${b.status}">${b.status}</span>
+                            <p style="font-weight:700;color:var(--primary);margin-top:0.4rem">
+                                ${formatTZS(b.price_per_month)}/mo
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+
+        } catch (err) {
+            list.innerHTML = '<p class="text-center" style="color:red">Failed to load bookings.</p>';
+        }
+    });
+</script>
+</body>
+</html>

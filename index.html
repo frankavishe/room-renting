@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TZ-Rooms — Find Your Room in Tanzania</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+<!-- ===== NAVBAR ===== -->
+<nav class="navbar">
+    <a href="index.html" class="logo">TZ<span>-Rooms</span></a>
+    <div class="nav-links" id="nav-links">
+        <!-- Filled dynamically by main.js based on login state -->
+    </div>
+</nav>
+
+<!-- ===== HERO ===== -->
+<section class="hero">
+    <div class="container">
+        <h1>Find Your Perfect Room in Tanzania</h1>
+        <p>Browse thousands of verified rooms in Dar es Salaam, Arusha, Dodoma, Mwanza and more.</p>
+        <!-- Search bar navigates to rooms.html with query params -->
+        <form class="search-bar" id="hero-search"
+              onsubmit="handleHeroSearch(event)">
+            <input type="text" name="location" placeholder="City or District (e.g. Kinondoni)">
+            <input type="number" name="max_price" placeholder="Max Price (TZS)">
+            <button type="submit" class="btn btn-accent">Search</button>
+        </form>
+    </div>
+</section>
+
+<!-- ===== FEATURED ROOMS ===== -->
+<main class="container">
+    <h2 class="section-title">Latest Available Rooms</h2>
+    <div class="rooms-grid" id="rooms-grid">
+        <!-- Room cards injected by loadRooms() in main.js -->
+    </div>
+</main>
+
+<!-- ===== FOOTER ===== -->
+<footer>
+    <p><strong>TZ-Rooms</strong> &copy; 2026 — Connecting tenants and landlords across Tanzania.</p>
+</footer>
+
+<script src="assets/js/main.js"></script>
+<script>
+    // Load latest rooms on the homepage grid.
+    document.addEventListener('DOMContentLoaded', () => loadRooms());
+
+    // Hero search navigates to rooms.html and passes filters as URL query params.
+    function handleHeroSearch(e) {
+        e.preventDefault();
+        const form   = e.target;
+        const params = new URLSearchParams();
+        const loc    = form.querySelector('[name=location]').value.trim();
+        const maxP   = form.querySelector('[name=max_price]').value.trim();
+        if (loc)  params.set('location',  loc);
+        if (maxP) params.set('max_price', maxP);
+        window.location.href = 'rooms.html?' + params.toString();
+    }
+</script>
+</body>
+</html>

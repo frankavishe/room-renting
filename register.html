@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up — TZ-Rooms</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+<nav class="navbar">
+    <a href="index.html" class="logo">TZ<span>-Rooms</span></a>
+    <div class="nav-links" id="nav-links"></div>
+</nav>
+
+<main class="container">
+    <div class="form-wrap">
+        <h2>Create Account</h2>
+
+        <!-- Alert box — hidden by default, shown by showAlert() in main.js -->
+        <div id="form-alert" class="alert hidden"></div>
+
+        <form id="register-form" novalidate>
+            <div class="form-group">
+                <label for="name">Full Name</label>
+                <input type="text" id="name" name="name" placeholder="e.g. Amina Juma" required>
+            </div>
+            <div class="form-group">
+                <label for="phone">Phone Number *</label>
+                <input type="tel" id="phone" name="phone" placeholder="0712 345 678" required>
+                <p class="form-hint">Used to log in and receive M-Pesa prompts.</p>
+            </div>
+            <div class="form-group">
+                <label for="email">Email (optional)</label>
+                <input type="email" id="email" name="email" placeholder="you@example.com">
+            </div>
+            <div class="form-group">
+                <label for="password">Password *</label>
+                <input type="password" id="password" name="password" placeholder="Min 8 characters" required>
+            </div>
+            <div class="form-group">
+                <label for="role">I am a...</label>
+                <select id="role" name="role">
+                    <option value="tenant">Tenant (looking for a room)</option>
+                    <option value="landlord">Landlord (posting rooms)</option>
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary btn-full">Create Account</button>
+        </form>
+
+        <p class="form-switch">Already have an account? <a href="login.html">Login here</a></p>
+    </div>
+</main>
+
+<script src="assets/js/main.js"></script>
+</body>
+</html>

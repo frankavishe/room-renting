@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Browse Rooms — TZ-Rooms</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+<nav class="navbar">
+    <a href="index.html" class="logo">TZ<span>-Rooms</span></a>
+    <div class="nav-links" id="nav-links"></div>
+</nav>
+
+<main class="container">
+    <h2 class="section-title">Browse Rooms</h2>
+
+    <!-- Filter form: submitting triggers loadRooms() in main.js -->
+    <form id="search-form" style="display:flex;flex-wrap:wrap;gap:0.6rem;margin-bottom:1.2rem;justify-content:center">
+        <input type="text"   name="location"  placeholder="Location (e.g. Arusha)"
+               style="padding:0.55rem 0.85rem;border:1.5px solid #dee2e6;border-radius:8px;font-size:0.95rem;flex:1 1 160px">
+        <input type="number" name="min_price" placeholder="Min TZS"
+               style="padding:0.55rem 0.85rem;border:1.5px solid #dee2e6;border-radius:8px;font-size:0.95rem;flex:1 1 120px">
+        <input type="number" name="max_price" placeholder="Max TZS"
+               style="padding:0.55rem 0.85rem;border:1.5px solid #dee2e6;border-radius:8px;font-size:0.95rem;flex:1 1 120px">
+        <button type="submit" class="btn btn-primary">Filter</button>
+    </form>
+
+    <!-- Cards are rendered here by loadRooms() -->
+    <div class="rooms-grid" id="rooms-grid"></div>
+</main>
+
+<footer>
+    <p><strong>TZ-Rooms</strong> &copy; 2026</p>
+</footer>
+
+<script src="assets/js/main.js"></script>
+<script>
+    // On page load, read any query params from the URL (passed from hero search)
+    // and pre-populate the filter form, then load results.
+    document.addEventListener('DOMContentLoaded', () => {
+        const params = new URLSearchParams(window.location.search);
+        if (params.get('location'))  document.querySelector('[name=location]').value  = params.get('location');
+        if (params.get('max_price')) document.querySelector('[name=max_price]').value = params.get('max_price');
+        if (params.get('min_price')) document.querySelector('[name=min_price]').value = params.get('min_price');
+
+        const filters = {};
+        if (params.get('location'))  filters.location  = params.get('location');
+        if (params.get('max_price')) filters.max_price = params.get('max_price');
+        if (params.get('min_price')) filters.min_price = params.get('min_price');
+        loadRooms(filters);
+    });
+</script>
+</body>
+</html>

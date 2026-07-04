@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Post a Room — TZ-Rooms</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+<nav class="navbar">
+    <a href="index.html" class="logo">TZ<span>-Rooms</span></a>
+    <div class="nav-links" id="nav-links"></div>
+</nav>
+
+<main class="container">
+    <div class="form-wrap" style="max-width:560px">
+        <h2>Post a Room</h2>
+
+        <div id="form-alert" class="alert hidden"></div>
+
+        <form id="post-room-form" novalidate>
+            <div class="form-group">
+                <label>Room Title</label>
+                <input type="text" name="title" placeholder="e.g. Furnished Self-Contained Room in Kinondoni" required>
+            </div>
+            <div class="form-group">
+                <label>Description</label>
+                <textarea name="description" placeholder="Describe the room: size, neighbors, security, utilities..." required></textarea>
+            </div>
+            <div class="form-group">
+                <label>Price per Month (TZS)</label>
+                <input type="number" name="price_per_month" placeholder="e.g. 180000" min="0" required>
+            </div>
+            <div class="form-group">
+                <label>Location</label>
+                <input type="text" name="location" placeholder="e.g. Kinondoni, Dar es Salaam" required>
+            </div>
+            <div class="form-group">
+                <label>Amenities (comma-separated)</label>
+                <input type="text" name="amenities" placeholder="WiFi, Water, Security, Parking">
+                <p class="form-hint">e.g.  WiFi, Electricity, Water, Fridge</p>
+            </div>
+            <div class="form-group">
+                <label>Image URLs (comma-separated)</label>
+                <textarea name="images" placeholder="https://... , https://..."></textarea>
+                <p class="form-hint">Paste full image URLs. Separate multiple with commas.</p>
+            </div>
+            <button type="submit" class="btn btn-primary btn-full">Publish Listing</button>
+        </form>
+    </div>
+</main>
+
+<footer>
+    <p><strong>TZ-Rooms</strong> &copy; 2026</p>
+</footer>
+
+<script src="assets/js/main.js"></script>
+<script>
+    // Guard: redirect to login if not a landlord.
+    document.addEventListener('DOMContentLoaded', () => {
+        const user = Auth.getUser();
+        if (!user) { window.location.href = 'login.html'; return; }
+        if (user.role === 'tenant') {
+            window.location.href = 'rooms.html';
+            return;
+        }
+    });
+
+    document.getElementById('post-room-form').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const btn  = this.querySelector('button[type=submit]');
+        btn.disabled    = true;
+        btn.textContent = 'Publishing...';
+
+        // Parse comma-separated amenities and images into arrays.
+        const amenities = this.amenities.value.split(',').map(s => s.trim()).filter(Boolean);
+        const images    = this.images.value.split(',').map(s => s.trim()).filter(Boolean);
+
+        const payload = {
+            title:           this.elements['title'].value,
+            description:     this.description.value,
+            price_per_month: parseFloat(this.price_per_month.value),
+            location:        this.location.value,
+            amenities,
+            images
+        };
+
+        try {
+            const res  = await fetch('api/rooms/create.php', {
+                method:  'POST',
+                headers: {
+                    'Content-Type':  'application/json',
+                    'Authorization': 'Bearer ' + Auth.getToken()
+                },
+                body: JSON.stringify(payload)
+            });
+            const data = await res.json();
+
+            if (res.ok) {
+                showAlert('form-alert', 'Room published! Redirecting...', 'success');
+                setTimeout(() => window.location.href = 'rooms.html', 1500);
+            } else {
+                showAlert('form-alert', data.message);
+            }
+        } catch (err) {
+            showAlert('form-alert', 'Network error. Please try again.');
+        }
+
+        btn.disabled    = false;
+        btn.textContent = 'Publish Listing';
+    });
+</script>
+</body>
+</html>
