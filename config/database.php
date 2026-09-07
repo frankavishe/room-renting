@@ -27,9 +27,9 @@ $options = [
 try {
     $db = new PDO($dsn, DB_USER, DB_PASS, $options);
 } catch (PDOException $e) {
-    // In production, NEVER expose the real error message to the browser.
-    // Log it server-side instead. For now during development, we show it.
+    // Never expose the real error message to the browser — log it server-side instead.
+    error_log("Database connection failed: " . $e->getMessage());
     http_response_code(503);
-    echo json_encode(["message" => "Database connection failed: " . $e->getMessage()]);
+    echo json_encode(["message" => "Database connection failed. Please try again later."]);
     exit();
 }

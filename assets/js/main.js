@@ -98,9 +98,8 @@ function updateNavbar() {
     if (user) {
         navLinks.innerHTML = `
             <a href="rooms.html">Browse Rooms</a>
-            ${user.role === 'landlord' || user.role === 'admin'
-                ? '<a href="post-room.html">Post a Room</a>'
-                : ''}
+            ${user.role === 'landlord' ? '<a href="post-room.html">Post a Room</a>' : ''}
+            ${user.role === 'admin' ? '<a href="admin.html">Admin Dashboard</a>' : ''}
             <a href="my-bookings.html">My Bookings</a>
             <a href="#" onclick="Auth.logout()">Logout (${user.name.split(' ')[0]})</a>
         `;
@@ -234,8 +233,12 @@ async function handleLogin(e) {
 
         if (res.ok) {
             Auth.save(data.token, data.user);
-            // Redirect landlords to their dashboard, tenants to room listings.
-            window.location.href = data.user.role === 'landlord' ? 'post-room.html' : 'rooms.html';
+            // Redirect landlords to their dashboard, admins to the admin panel,
+            // and everyone else (tenants) to room listings.
+            const dest = data.user.role === 'landlord' ? 'post-room.html'
+                       : data.user.role === 'admin'    ? 'admin.html'
+                       : 'rooms.html';
+            window.location.href = dest;
         } else {
             showAlert('form-alert', data.message);
         }

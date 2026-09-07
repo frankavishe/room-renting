@@ -39,3 +39,41 @@ function verifyJWT(string $token): array|false
 
     return $decoded;
 }
+
+/**
+ * Reads the "Authorization: Bearer <token>" header, if present.
+ * Returns just the token string, or null if the header is missing/malformed.
+ */
+function getBearerToken(): ?string
+{
+    $headers = getallheaders();
+    $auth = $headers['Authorization'] ?? $headers['authorization'] ?? '';
+    if (stripos($auth, 'Bearer ') !== 0) return null;
+    return substr($auth, 7);
+}
+
+/**
+ * Verifies the request's bearer token AND that its role is in $allowedRoles.
+ * On failure, sends the appropriate 401/403 JSON response and exits —
+ * so callers can just do: $decoded = requireRole(['admin']);
+ * and use $decoded afterwards knowing it's valid.
+ */
+function requireRole(array $allowedRoles): array
+{
+    $token   = getBearerToken();
+    $decoded = $token ? verifyJWT($token) : false;
+
+    if (!$decoded) {
+        http_response_code(401);
+        echo json_encode(["message" => "Unauthorized. Please log in."]);
+        exit();
+    }
+
+    if (!in_array($decoded['role'], $allowedRoles, true)) {
+        http_response_code(403);
+        echo json_encode(["message" => "Forbidden. You do not have permission to perform this action."]);
+        exit();
+    }
+
+    return $decoded;
+}

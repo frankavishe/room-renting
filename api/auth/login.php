@@ -15,6 +15,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 }
 
 require_once '../../config/database.php';
+require_once 'jwt_helper.php';
 
 $data = json_decode(file_get_contents("php://input"));
 
@@ -48,7 +49,7 @@ if (!$user || !password_verify($data->password, $user['password'])) {
 // Payload → the data we store (user id, role, expiry)
 // Signature → proves the token hasn't been tampered with
 // ----------------------------------------------------------------
-$secretKey = "TZ_ROOMS_SECRET_CHANGE_THIS_IN_PRODUCTION";  // Change this!
+$secretKey = JWT_SECRET;  // Defined once in jwt_helper.php — keep signing/verifying in sync
 
 $header = base64_encode(json_encode(["alg" => "HS256", "typ" => "JWT"]));
 

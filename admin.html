@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <script>(function(){try{var t=localStorage.getItem('tz_theme')||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard — TZ-Rooms</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+<nav class="navbar">
+    <a href="index.html" class="logo">TZ<span>-Rooms</span></a>
+    <div class="navbar-right">
+        <button class="icon-btn" id="theme-toggle" type="button" aria-label="Toggle dark mode">
+            <svg class="icon-sun" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+            <svg class="icon-moon" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </button>
+        <div class="nav-links" id="nav-links"></div>
+    </div>
+</nav>
+
+<main class="container">
+    <h2 class="section-title">Admin Dashboard</h2>
+    <div id="admin-alert" class="alert alert-danger hidden"></div>
+
+    <div class="admin-tabs" id="admin-tabs">
+        <button class="tab-btn active" data-tab="overview" type="button">Overview</button>
+        <button class="tab-btn" data-tab="users" type="button">Users</button>
+        <button class="tab-btn" data-tab="rooms" type="button">Rooms</button>
+        <button class="tab-btn" data-tab="bookings" type="button">Bookings</button>
+        <button class="tab-btn" data-tab="payments" type="button">Payments</button>
+    </div>
+
+    <section id="tab-overview" class="tab-panel">
+        <div class="stat-grid" id="stat-grid">
+            <p class="text-center" style="padding:2rem">Loading stats...</p>
+        </div>
+    </section>
+
+    <section id="tab-users" class="tab-panel hidden">
+        <div class="table-wrap">
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>Name</th><th>Phone</th><th>Email</th><th>Role</th>
+                        <th>Rooms</th><th>Bookings</th><th>Joined</th><th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="users-tbody">
+                    <tr><td colspan="8" class="text-center">Loading...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <section id="tab-rooms" class="tab-panel hidden">
+        <div class="table-wrap">
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>Title</th><th>Owner</th><th>Location</th><th>Price</th>
+                        <th>Status</th><th>Bookings</th><th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="rooms-tbody">
+                    <tr><td colspan="7" class="text-center">Loading...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <section id="tab-bookings" class="tab-panel hidden">
+        <div class="table-wrap">
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>Room</th><th>Tenant</th><th>Dates</th>
+                        <th>Status</th><th>Payment</th><th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="bookings-tbody">
+                    <tr><td colspan="6" class="text-center">Loading...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <section id="tab-payments" class="tab-panel hidden">
+        <div class="table-wrap">
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>Reference</th><th>Provider</th><th>Amount</th>
+                        <th>Status</th><th>Tenant</th><th>Room</th><th>Updated</th>
+                    </tr>
+                </thead>
+                <tbody id="payments-tbody">
+                    <tr><td colspan="7" class="text-center">Loading...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+</main>
+
+<footer>
+    <p><strong>TZ-Rooms</strong> &copy; 2026</p>
+</footer>
+
+<script src="assets/js/main.js"></script>
+<script src="assets/js/admin.js"></script>
+</body>
+</html>
