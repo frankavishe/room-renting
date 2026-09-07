@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <script>(function(){try{var t=localStorage.getItem('tz_theme')||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Room Details — TZ-Rooms</title>
     <link rel="stylesheet" href="assets/css/style.css">
@@ -10,10 +11,16 @@
 
 <nav class="navbar">
     <a href="index.html" class="logo">TZ<span>-Rooms</span></a>
-    <div class="nav-links" id="nav-links"></div>
+    <div class="navbar-right">
+        <button class="icon-btn" id="theme-toggle" type="button" aria-label="Toggle dark mode">
+            <svg class="icon-sun" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+            <svg class="icon-moon" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </button>
+        <div class="nav-links" id="nav-links"></div>
+    </div>
 </nav>
 
-<main class="container" style="max-width:720px;padding:1.5rem 1rem">
+<main class="container" style="max-width:1100px;padding:1.5rem 1rem 2rem">
     <div id="room-detail-content">
         <p class="text-center" style="padding:3rem">Loading room details...</p>
     </div>
@@ -24,7 +31,7 @@
 <div class="modal-overlay" id="payment-modal">
     <div class="modal">
         <h3>Pay with Mobile Money</h3>
-        <p style="margin-bottom:1rem;color:#555">
+        <p style="margin-bottom:1rem;color:var(--text-muted)">
             Amount: <strong id="modal-amount"></strong>
         </p>
 
@@ -33,7 +40,7 @@
 
         <!-- FORM STATE: user enters phone and selects provider -->
         <div id="payment-form">
-            <p style="font-size:0.88rem;margin-bottom:0.6rem;color:#666">Select your provider:</p>
+            <p style="font-size:0.88rem;margin-bottom:0.6rem;color:var(--text-muted)">Select your provider:</p>
             <div class="provider-grid">
                 <button class="provider-btn" onclick="selectProvider(this, 'MPESA')">M-Pesa</button>
                 <button class="provider-btn" onclick="selectProvider(this, 'TIGOPESA')">Tigo Pesa</button>
@@ -57,15 +64,15 @@
         <!-- WAITING STATE: shown after STK push is sent -->
         <div id="payment-waiting" class="hidden" style="text-align:center;padding:1rem">
             <span class="spinner"></span>
-            <p id="polling-status" style="margin-top:0.8rem;color:#555">Waiting for confirmation...</p>
-            <p style="font-size:0.82rem;color:#888;margin-top:0.4rem">Enter your PIN on your phone to complete payment.</p>
+            <p id="polling-status" style="margin-top:0.8rem;color:var(--text-muted)">Waiting for confirmation...</p>
+            <p style="font-size:0.82rem;color:var(--text-muted);margin-top:0.4rem">Enter your PIN on your phone to complete payment.</p>
         </div>
 
         <!-- SUCCESS STATE -->
         <div id="payment-success" class="hidden" style="text-align:center;padding:1rem">
             <p style="font-size:2rem">✓</p>
-            <p style="color:#155724;font-weight:600">Payment Successful!</p>
-            <p style="font-size:0.88rem;color:#555;margin-top:0.4rem">Redirecting to your bookings...</p>
+            <p style="color:var(--success);font-weight:600">Payment Successful!</p>
+            <p style="font-size:0.88rem;color:var(--text-muted);margin-top:0.4rem">Redirecting to your bookings...</p>
         </div>
     </div>
 </div>
@@ -83,7 +90,7 @@
     async function loadRoomDetail() {
         const content = document.getElementById('room-detail-content');
         if (!roomId) {
-            content.innerHTML = '<p class="text-center" style="color:red">No room ID specified.</p>';
+            content.innerHTML = '<p class="text-center" style="color:var(--danger)">No room ID specified.</p>';
             return;
         }
 
@@ -94,7 +101,7 @@
             const room = data.rooms?.find(r => r.id == roomId);
 
             if (!room) {
-                content.innerHTML = '<p class="text-center" style="color:red">Room not found.</p>';
+                content.innerHTML = '<p class="text-center" style="color:var(--danger)">Room not found.</p>';
                 return;
             }
 
@@ -102,52 +109,74 @@
 
             const images = room.images.map((src, i) =>
                 `<img src="${src}" alt="Room photo ${i+1}" loading="lazy"
-                      onerror="this.src='assets/img/placeholder.jpg'"
-                      style="width:100%;height:260px;object-fit:cover;border-radius:8px;margin-bottom:0.6rem">`
-            ).join('') || `<img src="assets/img/placeholder.jpg" style="width:100%;height:260px;object-fit:cover;border-radius:8px;margin-bottom:0.6rem">`;
+                      onerror="this.src='assets/img/placeholder.jpg'">`
+            ).join('') || `<img src="assets/img/placeholder.jpg" alt="${room.title}">`;
 
             const amenityTags = room.amenities
                 .map(a => `<span class="tag">${a}</span>`).join('');
 
+            const areaLabel   = room.location.split(',')[0].trim();
+            const ownerFirst  = room.owner_name.split(' ')[0];
+
             content.innerHTML = `
-                ${images}
-                <h2 style="margin:1rem 0 0.3rem">${room.title}</h2>
-                <p style="color:#6c757d;margin-bottom:0.8rem">📍 ${room.location}</p>
-                <p style="font-size:1.4rem;font-weight:700;color:var(--primary);margin-bottom:0.8rem">
-                    ${formatTZS(room.price_per_month)}<small style="font-size:0.9rem;font-weight:400">/month</small>
-                </p>
-                <div class="amenities" style="margin-bottom:1rem">${amenityTags}</div>
-                <h4 style="margin-bottom:0.5rem">Description</h4>
-                <p style="color:#444;margin-bottom:1.5rem;line-height:1.7">${room.description}</p>
-                <h4 style="margin-bottom:0.3rem">Contact Landlord</h4>
-                <p style="margin-bottom:1.5rem">
-                    ${room.owner_name} &mdash;
-                    <a href="tel:${room.owner_phone}">${room.owner_phone}</a>
-                </p>
+                <div class="detail-layout">
+                    <div class="detail-content">
+                        <div class="detail-gallery">${images}</div>
 
-                <div id="booking-alert" class="alert hidden"></div>
+                        <h2 class="detail-title">${room.title}</h2>
+                        <p class="detail-location">📍 ${room.location}</p>
+                        <div class="amenities">${amenityTags}</div>
 
-                <h4 style="margin-bottom:0.8rem">Book This Room</h4>
-                <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.6rem;margin-bottom:0.8rem">
-                    <div>
-                        <label style="font-size:0.85rem;display:block;margin-bottom:0.3rem">Move-in Date</label>
-                        <input type="date" id="start-date"
-                               style="width:100%;padding:0.55rem 0.7rem;border:1.5px solid #dee2e6;border-radius:8px;font-size:0.9rem"
-                               min="${new Date().toISOString().split('T')[0]}">
+                        <div class="detail-block">
+                            <h4>Description</h4>
+                            <p>${room.description}</p>
+                        </div>
                     </div>
-                    <div>
-                        <label style="font-size:0.85rem;display:block;margin-bottom:0.3rem">Move-out Date</label>
-                        <input type="date" id="end-date"
-                               style="width:100%;padding:0.55rem 0.7rem;border:1.5px solid #dee2e6;border-radius:8px;font-size:0.9rem">
-                    </div>
+
+                    <aside class="detail-summary">
+                        <p class="price-big">${formatTZS(room.price_per_month)}<small>/month</small></p>
+
+                        <div class="spec-grid" style="margin-bottom:1.2rem">
+                            <div class="spec-box">
+                                <div class="spec-value">${room.amenities.length}</div>
+                                <div class="spec-label">Amenities</div>
+                            </div>
+                            <div class="spec-box">
+                                <div class="spec-value">${areaLabel}</div>
+                                <div class="spec-label">Area</div>
+                            </div>
+                            <div class="spec-box">
+                                <div class="spec-value">${ownerFirst}</div>
+                                <div class="spec-label">Landlord</div>
+                            </div>
+                        </div>
+
+                        <div id="booking-alert" class="alert hidden"></div>
+
+                        <div class="date-grid">
+                            <div>
+                                <label for="start-date">Move-in Date</label>
+                                <input type="date" id="start-date" min="${new Date().toISOString().split('T')[0]}">
+                            </div>
+                            <div>
+                                <label for="end-date">Move-out Date</label>
+                                <input type="date" id="end-date">
+                            </div>
+                        </div>
+                        <button id="book-btn" class="btn btn-accent btn-full"
+                                onclick="initiateBooking(${room.id}, ${room.price_per_month})">
+                            Book &amp; Pay
+                        </button>
+
+                        <div class="detail-block" style="margin-top:1.3rem;margin-bottom:0">
+                            <h4>Contact Landlord</h4>
+                            <p>${room.owner_name} &mdash; <a href="tel:${room.owner_phone}">${room.owner_phone}</a></p>
+                        </div>
+                    </aside>
                 </div>
-                <button id="book-btn" class="btn btn-accent btn-full"
-                        onclick="initiateBooking(${room.id}, ${room.price_per_month})">
-                    Book &amp; Pay
-                </button>
             `;
         } catch (err) {
-            content.innerHTML = '<p class="text-center" style="color:red">Failed to load room. Try again.</p>';
+            content.innerHTML = '<p class="text-center" style="color:var(--danger)">Failed to load room. Try again.</p>';
         }
     }
 

@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <script>(function(){try{var t=localStorage.getItem('tz_theme')||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Browse Rooms — TZ-Rooms</title>
     <link rel="stylesheet" href="assets/css/style.css">
@@ -10,20 +11,23 @@
 
 <nav class="navbar">
     <a href="index.html" class="logo">TZ<span>-Rooms</span></a>
-    <div class="nav-links" id="nav-links"></div>
+    <div class="navbar-right">
+        <button class="icon-btn" id="theme-toggle" type="button" aria-label="Toggle dark mode">
+            <svg class="icon-sun" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+            <svg class="icon-moon" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </button>
+        <div class="nav-links" id="nav-links"></div>
+    </div>
 </nav>
 
 <main class="container">
     <h2 class="section-title">Browse Rooms</h2>
 
     <!-- Filter form: submitting triggers loadRooms() in main.js -->
-    <form id="search-form" style="display:flex;flex-wrap:wrap;gap:0.6rem;margin-bottom:1.2rem;justify-content:center">
-        <input type="text"   name="location"  placeholder="Location (e.g. Arusha)"
-               style="padding:0.55rem 0.85rem;border:1.5px solid #dee2e6;border-radius:8px;font-size:0.95rem;flex:1 1 160px">
-        <input type="number" name="min_price" placeholder="Min TZS"
-               style="padding:0.55rem 0.85rem;border:1.5px solid #dee2e6;border-radius:8px;font-size:0.95rem;flex:1 1 120px">
-        <input type="number" name="max_price" placeholder="Max TZS"
-               style="padding:0.55rem 0.85rem;border:1.5px solid #dee2e6;border-radius:8px;font-size:0.95rem;flex:1 1 120px">
+    <form id="search-form" class="filter-bar">
+        <input type="text"   name="location"  placeholder="Location (e.g. Arusha)">
+        <input type="number" name="min_price" placeholder="Min TZS">
+        <input type="number" name="max_price" placeholder="Max TZS">
         <button type="submit" class="btn btn-primary">Filter</button>
     </form>
 

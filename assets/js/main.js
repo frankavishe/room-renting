@@ -2,6 +2,37 @@
 // Core application logic: auth state, room loading, and UI helpers.
 
 // ----------------------------------------------------------------
+// THEME (light/dark)
+// The <head> of every page also runs a tiny inline anti-flash script
+// that sets data-theme before first paint — this just keeps the
+// toggle button and localStorage in sync after that.
+// ----------------------------------------------------------------
+const Theme = {
+    KEY: 'tz_theme',
+
+    get() {
+        return localStorage.getItem(this.KEY)
+            || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    },
+
+    apply(theme) {
+        document.documentElement.setAttribute('data-theme', theme);
+    },
+
+    toggle() {
+        const next = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+        localStorage.setItem(this.KEY, next);
+        this.apply(next);
+    },
+
+    init() {
+        this.apply(this.get());
+        const btn = document.getElementById('theme-toggle');
+        if (btn) btn.addEventListener('click', () => this.toggle());
+    }
+};
+
+// ----------------------------------------------------------------
 // AUTH HELPERS
 // The JWT is stored in localStorage — it persists across browser tabs
 // and page refreshes until the user logs out or the token expires.
@@ -100,7 +131,7 @@ function buildRoomCard(room) {
                 <p class="location">📍 ${room.location}</p>
                 <p class="price">${formatTZS(room.price_per_month)}<small>/month</small></p>
                 <div class="amenities">${amenityTags}</div>
-                <a href="room-detail.html?id=${room.id}" class="btn btn-primary">View Details</a>
+                <a href="room-detail.html?id=${room.id}" class="btn btn-primary btn-full">View Details</a>
             </div>
         </div>
     `;
@@ -220,6 +251,7 @@ async function handleLogin(e) {
 // On DOM ready: wire up forms and navbar
 // ----------------------------------------------------------------
 document.addEventListener('DOMContentLoaded', () => {
+    Theme.init();
     updateNavbar();
 
     const registerForm = document.getElementById('register-form');

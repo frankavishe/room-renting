@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <script>(function(){try{var t=localStorage.getItem('tz_theme')||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Bookings — TZ-Rooms</title>
     <link rel="stylesheet" href="assets/css/style.css">
@@ -10,7 +11,13 @@
 
 <nav class="navbar">
     <a href="index.html" class="logo">TZ<span>-Rooms</span></a>
-    <div class="nav-links" id="nav-links"></div>
+    <div class="navbar-right">
+        <button class="icon-btn" id="theme-toggle" type="button" aria-label="Toggle dark mode">
+            <svg class="icon-sun" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+            <svg class="icon-moon" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </button>
+        <div class="nav-links" id="nav-links"></div>
+    </div>
 </nav>
 
 <main class="container">
@@ -40,28 +47,22 @@
 
             if (!data.bookings || data.bookings.length === 0) {
                 list.innerHTML = `
-                    <p class="text-center" style="padding:2rem;color:#888">
+                    <p class="text-center" style="padding:2rem;color:var(--text-muted)">
                         No bookings yet. <a href="rooms.html">Browse rooms</a>
                     </p>`;
                 return;
             }
 
             list.innerHTML = data.bookings.map(b => `
-                <div style="background:#fff;border-radius:8px;padding:1.1rem;margin-bottom:0.9rem;box-shadow:0 2px 8px rgba(0,0,0,0.08)">
-                    <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:0.5rem">
-                        <div>
-                            <strong>${b.room_title}</strong>
-                            <p style="font-size:0.85rem;color:#6c757d">📍 ${b.location}</p>
-                            <p style="font-size:0.85rem;color:#444;margin-top:0.3rem">
-                                ${b.start_date} → ${b.end_date}
-                            </p>
-                        </div>
-                        <div style="text-align:right">
-                            <span class="badge badge-${b.status}">${b.status}</span>
-                            <p style="font-weight:700;color:var(--primary);margin-top:0.4rem">
-                                ${formatTZS(b.price_per_month)}/mo
-                            </p>
-                        </div>
+                <div class="booking-card">
+                    <div>
+                        <strong>${b.room_title}</strong>
+                        <p class="location">📍 ${b.location}</p>
+                        <p class="dates">${b.start_date} → ${b.end_date}</p>
+                    </div>
+                    <div class="meta">
+                        <span class="badge badge-${b.status}">${b.status}</span>
+                        <p class="price">${formatTZS(b.price_per_month)}/mo</p>
                     </div>
                 </div>
             `).join('');
