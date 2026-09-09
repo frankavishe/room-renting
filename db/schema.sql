@@ -74,3 +74,20 @@ CREATE TABLE `payments` (
     `updated_at`   TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (`booking_id`) REFERENCES `bookings`(`id`) ON DELETE RESTRICT
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- ============================================================
+-- TABLE 5: password_reset_tokens
+-- One row per "forgot password" request. token_hash is the sha256
+-- hex digest of the raw token; the raw token is only ever put in
+-- the emailed reset link, never stored. Tokens expire after 1 hour
+-- and are single-use (used_at set once redeemed).
+-- ============================================================
+CREATE TABLE `password_reset_tokens` (
+    `id`         INT AUTO_INCREMENT PRIMARY KEY,
+    `user_id`    INT NOT NULL,
+    `token_hash` VARCHAR(64) NOT NULL,
+    `expires_at` TIMESTAMP NOT NULL DEFAULT '2000-01-01 00:00:00',  -- always set explicitly on insert; explicit default avoids MySQL's implicit ON UPDATE CURRENT_TIMESTAMP behavior
+    `used_at`    TIMESTAMP NULL DEFAULT NULL,
+    `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

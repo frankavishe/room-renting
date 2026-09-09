@@ -251,17 +251,107 @@ async function handleLogin(e) {
 }
 
 // ----------------------------------------------------------------
+// FORGOT PASSWORD FORM handler
+// ----------------------------------------------------------------
+async function handleForgotPassword(e) {
+    e.preventDefault();
+    const form = e.target;
+    const btn  = form.querySelector('button[type=submit]');
+
+    btn.disabled    = true;
+    btn.textContent = 'Sending...';
+
+    const payload = {
+        email: form.email.value
+    };
+
+    try {
+        const res  = await fetch('api/auth/forgot_password.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+
+        if (res.ok) {
+            showAlert('form-alert', data.message, 'success');
+            form.reset();
+        } else {
+            showAlert('form-alert', data.message);
+        }
+    } catch (err) {
+        showAlert('form-alert', 'Network error. Please try again.');
+    }
+
+    btn.disabled    = false;
+    btn.textContent = 'Send Reset Link';
+}
+
+// ----------------------------------------------------------------
+// RESET PASSWORD FORM handler
+// ----------------------------------------------------------------
+async function handleResetPassword(e) {
+    e.preventDefault();
+    const form = e.target;
+    const btn  = form.querySelector('button[type=submit]');
+
+    if (form.password.value !== form.confirm_password.value) {
+        showAlert('form-alert', 'Passwords do not match.');
+        return;
+    }
+
+    const token = new URLSearchParams(window.location.search).get('token');
+    if (!token) {
+        showAlert('form-alert', 'Missing or invalid reset link.');
+        return;
+    }
+
+    btn.disabled    = true;
+    btn.textContent = 'Resetting...';
+
+    const payload = {
+        token:    token,
+        password: form.password.value
+    };
+
+    try {
+        const res  = await fetch('api/auth/reset_password.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+
+        if (res.ok) {
+            showAlert('form-alert', data.message, 'success');
+            setTimeout(() => window.location.href = 'login.html', 1500);
+        } else {
+            showAlert('form-alert', data.message);
+        }
+    } catch (err) {
+        showAlert('form-alert', 'Network error. Please try again.');
+    }
+
+    btn.disabled    = false;
+    btn.textContent = 'Reset Password';
+}
+
+// ----------------------------------------------------------------
 // On DOM ready: wire up forms and navbar
 // ----------------------------------------------------------------
 document.addEventListener('DOMContentLoaded', () => {
     Theme.init();
     updateNavbar();
 
-    const registerForm = document.getElementById('register-form');
-    const loginForm    = document.getElementById('login-form');
+    const registerForm       = document.getElementById('register-form');
+    const loginForm          = document.getElementById('login-form');
+    const forgotPasswordForm = document.getElementById('forgot-password-form');
+    const resetPasswordForm  = document.getElementById('reset-password-form');
 
-    if (registerForm) registerForm.addEventListener('submit', handleRegister);
-    if (loginForm)    loginForm.addEventListener('submit', handleLogin);
+    if (registerForm)       registerForm.addEventListener('submit', handleRegister);
+    if (loginForm)          loginForm.addEventListener('submit', handleLogin);
+    if (forgotPasswordForm) forgotPasswordForm.addEventListener('submit', handleForgotPassword);
+    if (resetPasswordForm)  resetPasswordForm.addEventListener('submit', handleResetPassword);
 
     // Search form on rooms page
     const searchForm = document.getElementById('search-form');
