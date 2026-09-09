@@ -158,6 +158,35 @@ html[data-theme="dark"] #theme-toggle .icon-moon { display: inline-flex; }
 
 .navbar-right { display: flex; align-items: center; }
 
+/* Hamburger menu button — hidden on wide screens, shown by the media
+   query below. Injected dynamically by MobileNav in main.js so it
+   appears on every page without editing each page's markup. */
+.nav-toggle { display: none; }
+
+/* Collapsible nav: below the tablet breakpoint the link row can no
+   longer fit (up to 5 links for a logged-in landlord/admin), so it
+   becomes a toggleable dropdown instead of a horizontal row. */
+@media (max-width: 860px) {
+    .nav-toggle { display: inline-flex; margin-right: 0; }
+    .nav-links {
+        display: none;
+        position: absolute;
+        top: 62px;
+        left: 0;
+        right: 0;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.2rem;
+        background: var(--surface);
+        border-bottom: 1px solid var(--border);
+        padding: 0.6rem 1.2rem 1rem;
+        box-shadow: var(--shadow);
+    }
+    .nav-links.open { display: flex; }
+    .nav-links a { padding: 0.65rem 0.2rem; }
+    .nav-links .btn-nav { text-align: center; }
+}
+
 /* --- Container --- */
 .container {
     max-width: 1100px;
@@ -176,6 +205,11 @@ html[data-theme="dark"] #theme-toggle .icon-moon { display: inline-flex; }
 
 .hero h1 { font-size: 2.1rem; font-weight: 800; letter-spacing: -0.02em; margin-bottom: 0.7rem; }
 .hero p  { font-size: 1rem; color: var(--text-muted); max-width: 500px; margin: 0 auto 1.8rem; }
+
+@media (max-width: 480px) {
+    .hero { padding: 2.6rem 1rem 2rem; }
+    .hero h1 { font-size: 1.6rem; }
+}
 
 /* --- Search / Filter Bar --- */
 .search-bar {
@@ -373,6 +407,10 @@ html[data-theme="dark"] #theme-toggle .icon-moon { display: inline-flex; }
     border-radius: var(--radius-lg);
     border: 1px solid var(--border);
     margin-bottom: 0.6rem;
+}
+
+@media (max-width: 480px) {
+    .detail-gallery img { height: 220px; }
 }
 
 .detail-title { font-size: 1.5rem; font-weight: 800; letter-spacing: -0.02em; margin: 0.4rem 0 0.3rem; }

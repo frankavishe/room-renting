@@ -33,6 +33,62 @@ const Theme = {
 };
 
 // ----------------------------------------------------------------
+// MOBILE NAV
+// Below the tablet breakpoint (see the @media rule in style.css)
+// #nav-links becomes a hidden dropdown. This injects the hamburger
+// button that toggles it, so every page gets it for free without
+// editing each page's markup.
+// ----------------------------------------------------------------
+const MobileNav = {
+    init() {
+        if (document.getElementById('nav-toggle')) return; // already set up
+
+        const navLinks = document.getElementById('nav-links');
+        if (!navLinks) return;
+
+        const btn = document.createElement('button');
+        btn.id = 'nav-toggle';
+        btn.className = 'icon-btn nav-toggle';
+        btn.type = 'button';
+        btn.setAttribute('aria-label', 'Menu');
+        btn.setAttribute('aria-expanded', 'false');
+        btn.setAttribute('aria-controls', 'nav-links');
+        btn.innerHTML = `
+            <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round">
+                <line x1="3" y1="6" x2="21" y2="6"></line>
+                <line x1="3" y1="12" x2="21" y2="12"></line>
+                <line x1="3" y1="18" x2="21" y2="18"></line>
+            </svg>
+        `;
+
+        navLinks.parentElement.insertBefore(btn, navLinks);
+
+        btn.addEventListener('click', () => {
+            const open = navLinks.classList.toggle('open');
+            btn.setAttribute('aria-expanded', String(open));
+        });
+
+        // Close on outside click.
+        document.addEventListener('click', (e) => {
+            if (!navLinks.classList.contains('open')) return;
+            if (navLinks.contains(e.target) || btn.contains(e.target)) return;
+            navLinks.classList.remove('open');
+            btn.setAttribute('aria-expanded', 'false');
+        });
+
+        // Close whenever a link inside is clicked. Delegated on the
+        // container (rather than bound per-<a>) so it survives
+        // updateNavbar() re-rendering #nav-links' innerHTML.
+        navLinks.addEventListener('click', (e) => {
+            if (e.target.closest('a')) {
+                navLinks.classList.remove('open');
+                btn.setAttribute('aria-expanded', 'false');
+            }
+        });
+    }
+};
+
+// ----------------------------------------------------------------
 // AUTH HELPERS
 // The JWT is stored in localStorage — it persists across browser tabs
 // and page refreshes until the user logs out or the token expires.
@@ -342,6 +398,7 @@ async function handleResetPassword(e) {
 document.addEventListener('DOMContentLoaded', () => {
     Theme.init();
     updateNavbar();
+    MobileNav.init();
 
     const registerForm       = document.getElementById('register-form');
     const loginForm          = document.getElementById('login-form');
